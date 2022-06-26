@@ -1,0 +1,55 @@
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.hide {
+    display: none;
+}
+
+
+/* for whole Navbar */
+
+.navbar {
+    font-family: Roboto, Noto Naskh Arabic UI, Arial, sans-serif;
+    /* position: fixed; */
+    top: 0;
+    left: 0;
+    right: 0;
+    color: #737373;
+    height: 5rem;
+    max-width: 1920px;
+    padding: 1rem 1.5rem;
+    z-index: 100;
+}
+
+.navbar-nav {
+    margin-left: 50%;
+}
+
+.item {
+    margin-left: 50px;
+}
+
+.text-white {
+    --tw-text-opacity: 1;
+    color: rgba(255, 255, 255, var(--tw-text-opacity));
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.w-5 {
+    width: 2.25rem;
+    margin-top: 10px;
+}
+
+.h-5 {
+    height: 1.25rem;
+}
+
+.src {
+    height: 20px;
+    width: 20px;
+}
