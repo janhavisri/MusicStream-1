@@ -11,7 +11,6 @@ const Signup = () => {
   const userForm = {
     firstname: "",
     lastname: "",
-    password: "",
     email: "",
     password: "",
     confirmpassword: "",

@@ -1,11 +1,11 @@
 const mongoose = require("../connection");
 
 const schema = new mongoose.Schema({
-  username: String,
-  password: String,
-  email: String,
-  age: Number,
-  createdAt: { type: Date, default: new Date() },
+    firstname: String,
+    lastname: String,
+    email: String,
+    password: String,
+    confirmpassword: String,
 });
 
 const model = mongoose.model("users", schema);

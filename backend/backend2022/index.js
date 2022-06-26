@@ -1,50 +1,22 @@
-// importing express
-const express = require("express");
-
-// importing userRouter
-const UserRouter = require("./routers/UserRouter");
-const UtilRouter = require("./routers/util");
-
-// importing cors
-const cors = require("cors");
-
-// initialize express app
+const express = require('express');
 const app = express();
-
-const port = process.env.PORT || 5000;
-
+const UserRouter = require('./routers/UserRouter');
+const UtilRouter = require('./routers/Util');
+const port = process.env.PORT;
+const cors = require('cors');
 app.use(express.json());
+app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(express.static('./static/uploads'));
 
-app.use(
-  cors({
-    // allowing the frontend to request
-    origin: ["http://localhost:3000"],
-  })
-);
+app.use('/users', UserRouter);
+app.use('/util', UtilRouter);
 
-// using middleware
-app.use("/user", UserRouter);
-app.use("/util", UtilRouter);
 
-// endpoints or route
-app.get("/user", (req, res) => {
-  console.log("a request from client!!");
-  res.send("request processed at /");
-});
+app.get('/home', (req, res) => {
+    console.log('client request on server');
+    res.send('Request on home');
+})
 
-app.get("/", (req, res) => {
-  console.log("a request from client at home!!");
-  res.send("request processed at /home");
-});
-
-app.get("/home", (req, res) => {
-  console.log("a request from client at home!!");
-  res.send("request processed at /home");
-});
-
-// start the server
 app.listen(port, () => {
-  console.log("server started...");
-});
-
-// To run server : npm run dev
+    console.log(`Server started on port on localhost : ${port}`)
+})
