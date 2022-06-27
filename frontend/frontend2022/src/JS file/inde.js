@@ -1,9 +1,9 @@
-import Header from "../components/header.js";
+import header from "../components/header.js";
 import createMusicPlayer from "../components/player.js";
 
 var count = 1;
 window.addEventListener("load", async() => {
-    document.body.querySelector("nav").append(Header({ pageTitle: "Home" }))
+    document.body.querySelector("nav").append(header({ pageTitle: "Home" }))
     const res1 = await quickPicks("arjit")
 
 

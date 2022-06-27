@@ -1,151 +1,128 @@
-import { SearchRounded } from '@mui/icons-material'
-import React, {
-  createRef,
-  Fragment,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
-import Infocard from '../components/Infocard'
-import Header from '../components/header'
-import Song from '../components/Song'
-import GlobalContext from '../context/GlobalContext'
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlay,
+  faPause,
+  faAngleLeft,
+  faAngleRight,
+} from "@fortawesome/free-solid-svg-icons";
+//import { playAudio } from "../utils";
 
-const Search = () => {
-  const { spotifyApi } = useContext(GlobalContext)
-  const scrollRef = createRef()
+const Player = ({
+  currentSong,
+  setCurrentSong,
+  setIsPlaying,
+  isPlaying,
+  audioRef,
+  songInfo,
+  setSongs,
+  songs,
+  setSongInfo,
+}) => {
+  const activeLibraryHandler = (nextPrev) => {
+    const newSongs = songs.map((newSong) => {
+      if (newSong.id === nextPrev.id) {
+        return {
+          ...newSong,
+          active: true,
+        };
+      } else {
+        return {
+          ...newSong,
+          active: false,
+        };
+      }
+    });
+    setSongs(newSongs);
+  };
 
-  const [query, setQuery] = useState('')
-  const [categories, setCategories] = useState(null)
-  const [searchResult, setSearchResult] = useState(null)
+  const playSongHandler = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(!isPlaying);
+    } else {
+      audioRef.current.play();
+      setIsPlaying(!isPlaying);
+    }
+  };
 
-  const queryChange = e => {
-    setQuery(e.target.value)
-  }
+  const getTime = (time) => {
+    return (
+      Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2)
+    );
+  };
 
-  const searchQuery = e => {
-    e.preventDefault()
-    console.log(`Searching for ${query}`)
-    spotifyApi
-      .search(query, ['track', 'artist', 'playlist', 'album'], { limit: 10 })
-      .then(result => {
-        console.log(result)
-        setSearchResult(result)
-      })
-  }
+  const dragHandler = (e) => {
+    audioRef.current.currentTime = e.target.value;
+    setSongInfo({ ...songInfo, currentTime: e.target.value });
+  };
 
-  const getPlaylistsByCategory = category => {
-    console.log('Getting Category playlist ...')
-    scrollRef.current.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
-    spotifyApi.getCategoryPlaylists(category).then(playlists => {
-      console.log(playlists)
-      setSearchResult(playlists)
-    })
-  }
+  const skipTrackHandler = async (direction) => {
+    let currentIndex = songs.findIndex((song) => song.id === currentSong.id);
+    if (direction === "skip-forward") {
+      await setCurrentSong(songs[(currentIndex + 1) % songs.length]);
+      activeLibraryHandler(songs[(currentIndex + 1) % songs.length]);
+    }
+    if (direction === "skip-back") {
+      if ((currentIndex - 1) % songs.length === -1) {
+        await setCurrentSong(songs[songs.length - 1]);
+        activeLibraryHandler(songs[songs.length - 1]);
+      } else {
+        await setCurrentSong(songs[(currentIndex - 1) % songs.length]);
+        activeLibraryHandler(songs[(currentIndex - 1) % songs.length]);
+      }
+    }
+    if (isPlaying) audioRef.current.play();
+    //playAudio(isPlaying, audioRef);
+  };
 
-  useEffect(() => {
-    spotifyApi
-      .getCategories({
-        offset: 0,
-        country: 'IN',
-      })
-      .then(
-        function (data) {
-          console.log(data)
-          setCategories(data.categories)
-        },
-        function (err) {
-          console.log('Something went wrong!', err)
-        }
-      )
-  }, [])
+  const trackAnim = {
+    transform: `translateX(${songInfo.animationPercentage}%)`,
+  };
 
   return (
-    <Fragment>
-      <Header />
-      <div className='search scrollable' ref={scrollRef}>
-        <div className='searchHeader'>
-          <form action='#'>
-            <button className='searchBtn' onClick={e => searchQuery(e)}>
-              <SearchRounded className='searchIcon' />
-            </button>
-            <input
-              type='search'
-              value={query}
-              onChange={queryChange}
-              placeholder='Search'
-            />
-          </form>
+    <div className="player">
+      <div className="time-control">
+        <p>{getTime(songInfo.currentTime)}</p>
+        <div
+          style={{
+            background: `linear-gradient(to right, ${currentSong.color[0]}, ${currentSong.color[1]})`,
+          }}
+          className="track"
+        >
+          <input
+            min={0}
+            max={songInfo.duration || 0}
+            value={songInfo.currentTime}
+            onChange={dragHandler}
+            type="range"
+          />
+          <div style={trackAnim} className="animate-track"></div>
         </div>
-
-        {searchResult && (
-          <Fragment>
-            {searchResult.tracks && (
-              <div className='songs'>
-                <h2 className='heading'>Songs</h2>
-                <div className='songsList'>
-                  {searchResult &&
-                    searchResult.tracks.items?.map(item => (
-                      <Song key={item.id} songInfo={item} />
-                    ))}
-                </div>
-              </div>
-            )}
-            {searchResult.artists && (
-              <div className='mainContainer'>
-                <h2 className='heading'>Artists</h2>
-                <div className='cardContainer'>
-                  {searchResult.artists.items?.map(artist => (
-                    <Infocard key={artist.id} cardInfo={artist} />
-                  ))}
-                </div>
-              </div>
-            )}
-            {searchResult.playlists && (
-              <div className='mainContainer'>
-                <h2 className='heading'>Playlists</h2>
-                <div className='cardContainer'>
-                  {searchResult.playlists.items?.map(playlist => (
-                    <Infocard key={playlist.id} cardInfo={playlist} />
-                  ))}
-                </div>
-              </div>
-            )}
-            {searchResult.albums && (
-              <div className='mainContainer'>
-                <h2 className='heading'>Albums</h2>
-                <div className='cardContainer'>
-                  {searchResult.albums.items?.map(album => (
-                    <Infocard key={album.id} cardInfo={album} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </Fragment>
-        )}
-        {categories && (
-          <Fragment>
-            <h2 className='heading'>Search by Category</h2>
-            <div className='categoryCardContainer'>
-              {categories?.items?.map(item => (
-                <div
-                  className='categoryCard'
-                  key={item.id}
-                  onClick={() => getPlaylistsByCategory(item.id)}
-                >
-                  <img src={item.icons[0].url} alt='' />
-                  <p>{item.name}</p>
-                </div>
-              ))}
-            </div>
-          </Fragment>
-        )}
+        <p>{songInfo.duration ? getTime(songInfo.duration) : "0:00"}</p>
       </div>
-    </Fragment>
-  )
-}
+      <div className="play-control">
+        <FontAwesomeIcon
+          onClick={() => skipTrackHandler("skip-back")}
+          className="skip-back"
+          size="2x"
+          icon={faAngleLeft}
+        />
+        <FontAwesomeIcon
+          onClick={playSongHandler}
+          className="play"
+          size="2x"
+          icon={isPlaying ? faPause : faPlay}
+        />
+        <FontAwesomeIcon
+          onClick={() => skipTrackHandler("skip-forward")}
+          className="skip-forward"
+          size="2x"
+          icon={faAngleRight}
+        />
+      </div>
+    </div>
+  );
+};
 
-export default Search
+export default Player;

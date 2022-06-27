@@ -9,12 +9,15 @@ import EventHandling from "./components/eventhandling";
 import Gallery from "./components/gallery";
 import Header from "./components/header";
 import Search from "./components/search";
+// import SearchBox from "./components/searchBox";
 import Index from "./components/index";
 import Login from "./components/login";
+import Library from "./components/library";
 import ManageUser from "./components/admin/manageuser";
 import Signup from "./components/signup";
 import Explore from "./components/explore";
 import { Toaster } from "react-hot-toast";
+//import { GlobalState } from "./components/GlobalState";
 
 function App() {
   const username = "Peter Parkr";
@@ -45,6 +48,7 @@ function App() {
       <ThemeProvider theme={darkTheme ? theme1 : theme2}>
         <Toaster position="top-right" reverseOrder={false} />
         <BrowserRouter>
+        {/* <GlobalState> */}
           <Header darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
 
           <Routes>
@@ -58,6 +62,8 @@ function App() {
             <Route element={<Gallery />} path="gallery" />
             <Route element={<Signup />} path="signup" />
             <Route element={<Search />} path="search" />
+            {/* <Route element={<SearchBox />} path="searchBox" /> */}
+            {/* <Route element={<Library />} path="library" /> */}
             <Route element={<ManageUser />} path="manageuser" />
             <Route element={<Explore />} path="explore" />
 
@@ -68,6 +74,7 @@ function App() {
             <Route element={<Navigate to="/home"></Navigate>} path="" />
             <Route element={<Navigate to="/404"></Navigate>} path="*" />
           </Routes>
+          {/* </GlobalState> */}
         </BrowserRouter>
       </ThemeProvider>
     </div>

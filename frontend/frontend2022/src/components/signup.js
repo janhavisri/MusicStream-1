@@ -1,7 +1,10 @@
 import { Button, Container, Paper, TextField } from "@mui/material";
+import { NavLink } from "react-router-dom";
 import { Formik } from "formik";
 import React from "react";
+import Swal from "sweetalert2";
 import app_config from "../config";
+
 import "../stylesheets/signup.css"
 
 const Signup = () => {
@@ -17,8 +20,8 @@ const Signup = () => {
   };
 
   //   2. create a callback function for form submission
-  const userSubmit = (formdata) => {
-    console.log(formdata);
+  const userSubmit = (values) => {
+    console.log(values);
 
     // 1. Address
     // 2. Method
@@ -26,38 +29,34 @@ const Signup = () => {
     // 4. Data format
 
     // to request on backend
-    fetch(url + "/user/add", {
+    const reqOptions = {
       method: "POST",
-      body: JSON.stringify(formdata),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    };
+
+    // request on server and parse the json response
+    fetch(url + "users/add", reqOptions)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        if (data.message == "success") {
+          Swal.fire({
+            icon: "success",
+            title: "Registered!",
+            text: "Now Login to Continue",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops!",
+            text: "Something went wrong",
+          });
+        }
       });
-
-    //
   };
 
-  const uploadFile = (e) => {
-    // extracting file from input
-    const file = e.target.files[0];
-
-    // create formdata
-    const fd = new FormData();
-    fd.append("file", file);
-
-    // request for uploading file
-    fetch(url + "/util/uploadfile", {
-      method: "POST",
-      body: fd,
-    }).then((res) => {
-      console.log(res.status);
-    });
-  };
-
+ 
   //   3. add formik in jsx
   return (
     <div id="container_">
@@ -73,24 +72,24 @@ const Signup = () => {
             <form onSubmit={handleSubmit}>
     <div id="name_">
     
-      <input type="text" id="firstname" placeholder=" " spellcheck="false"onChange={handleChange}
+      <input type="firstname" id="firstname" placeholder=" " spellcheck="false"onChange={handleChange}
                 value={values.firstname} required />
       <label for="">First name</label>
-      <input type="text" id="lastname" placeholder=" " spellcheck="false"onChange={handleChange}
+      <input type="lastname" id="lastname" placeholder=" " spellcheck="false"onChange={handleChange}
                 value={values.lastname} required />
       <label for="">Last name</label>
     </div>
     <div>
-      <input type="email" id="email" placeholder=" " spellcheck="false"  onChange={handleChange}
+      <input type="email" id="email"  placeholder=" " spellcheck="false"  onChange={handleChange}
                 value={values.email} required />
       <label for="">Email</label>
       <p>You'll need to confirm that this email belongs to you.</p>
     </div>
     <div id="password">
-      <input type="password" id="pass" placeholder=" " onChange={handleChange}
+      <input type="password" id="password" className="password" placeholder=" " onChange={handleChange}
                 value={values.password}required />
       <label for="">Password</label>
-      <input type="password" name="" id="confirm" placeholder=" " onChange={handleChange}
+      <input type="password" name="" id="confirmpassword"className="confirm" placeholder=" " onChange={handleChange}
                 value={values.confirmpassword} required />
       <label for="">Confirm</label>
       <p>
@@ -101,7 +100,7 @@ const Signup = () => {
     </div>
     <div id="foot_">
       <a href="./login" id="link">Sign in instead</a>
-      <button id="register_">Next</button>
+    <button id="register_">Create Account</button>
     
     </div>
     </form>

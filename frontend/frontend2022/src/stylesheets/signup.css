@@ -48,8 +48,8 @@ a {
 
 #firstname,
 #lastname,
-#confirm,
-#pass {
+.confirm,
+.password {
     height: 40px;
     width: 200px;
     padding: 10px;
@@ -61,14 +61,14 @@ a {
 
 #firstname:focus,
 #lastname:focus,
-#confirm:focus,
-#pass:focus,
+.confirm:focus,
+.password:focus,
 #email:focus {
     border: 2px solid #1f52f9;
 }
 
 #firstname+label,
-#pass+label {
+.password+label {
     position: relative;
     /* top: -28px; */
     font-size: 12px;
@@ -79,8 +79,8 @@ a {
 #firstname:focus+label,
 #lastname:focus+label,
 #email:focus+label,
-#pass:focus+label,
-#confirm:focus+label {
+.password:focus+label,
+.confirm:focus+label {
     top: -1.2rem;
     color: #1f52f9;
     font-weight: 500px;
@@ -95,10 +95,10 @@ a {
 #firstname:focus+label,
 #email:not(:placeholder-shown)+label,
 #email:focus+label,
-#pass:not(:placeholder-shown)+label,
-#pass:focus+label,
-#confirm:not(:placeholder-shown)+label,
-#confirm:focus+label {
+.password:not(:placeholder-shown)+label,
+.password:focus+label,
+.confirm:not(:placeholder-shown)+label,
+.confirm:focus+label {
     top: -1.2rem;
     color: #1f52f9;
     font-weight: 500px;
@@ -110,11 +110,11 @@ a {
 }
 
 #lastname,
-#confirm {
+.confirm {
     margin-left: -50px;
 }
 
-#confirm+label,
+.confirm+label,
 #lastname+label {
     position: relative;
     font-size: 12px;
@@ -135,11 +135,11 @@ a {
     /* margin-left: -60px; */
 }
 
-#password {
+.password {
     margin-top: 30px;
 }
 
-#password>p {
+.password>p {
     font-size: 12px;
 }
 
@@ -153,8 +153,8 @@ a {
 
 #register_ {
     float: right;
-    margin-right: 130px;
-    width: 80px;
+    margin-right: 90px;
+    width: 150px;
     height: 35px;
     color: white;
     background-color: rgb(26, 115, 232);

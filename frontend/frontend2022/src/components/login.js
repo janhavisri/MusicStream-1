@@ -21,32 +21,35 @@ const Login = ({ username, age }) => {
 
   // 2. submit function
 
-  const loginSubmit = (formdata) => {
-    console.log(formdata);
+  const loginSubmit = (values) => {
+    fetch(url + "users/getbyemail/" + values.email)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data) {
+        console.log(data);
 
-    fetch(url + "/user/authenticate", {
-      method: "POST",
-      body: JSON.stringify(formdata),
-      headers: { "Content-Type": "application/json" },
-    }).then((res) => {
-      if (res.status === 200) {
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "Loggedin Successfully",
-        });
-      } else if (res.status === 400) {
-        Swal.fire({
-          icon: "error",
-          title: "OOps!",
-          text: "Loggedin Failed",
-        });
+        if (data.password == values.password) {
+          console.log("login success");
+
+          Swal.fire({
+            icon: "success",
+            title: "Login Success",
+          });
+
+          sessionStorage.setItem("user", JSON.stringify(data));
+          window.location.replace("./library");
+
+          return;
+        }
       }
 
-      return res.json();
+      Swal.fire({
+        icon: "error",
+        title: "Email or Password Incorrect",
+      });
     });
-  };
-
+};
+ 
   // 3. use Formik
 
   return (
@@ -66,11 +69,11 @@ const Login = ({ username, age }) => {
     <Formik initialValues={loginForm} onSubmit={loginSubmit}>
               {({ values, handleSubmit, handleChange }) => (
                 <form onSubmit={handleSubmit}>
-        <input  type="email" name="" id="email_" placeholder=" " spellcheck="false"  onChange={handleChange}
+        <input  type="email" name="" id="email" placeholder=" " spellcheck="false"  onChange={handleChange}
                     value={values.email}/>
         <label for="">Email</label>
         <br/>
-        <input type="password" placeholder=" " id="pass_" onChange={handleChange}
+        <input type="password" placeholder=" " id="password" className="pass" onChange={handleChange}
                     value={values.password}/>
         <label for="">Password</label>
          <div id="showDiv">
